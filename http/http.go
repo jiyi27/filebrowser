@@ -66,6 +66,9 @@ func NewHandler(
 	api.PathPrefix("/resources").Handler(monkey(resourcePutHandler, "/api/resources")).Methods("PUT")
 	api.PathPrefix("/resources").Handler(monkey(resourcePatchHandler(fileCache), "/api/resources")).Methods("PATCH")
 
+	// 上传文件相关路由, 注意上传文件分为两步: 1. POST 请求上传文件元数据，2. PATCH 请求上传文件内容
+	// 因此，上传文件时, POST 和 PATCH 路由都会被执行, 若后者执行失败, 则会发生, 文件被创建, 可是内容却是0B的情况
+	//TODO: 这种情况显然不合理, 因此, 在 PATCH 请求中, 若失败, 则应该会删除之前创建的文件
 	api.PathPrefix("/tus").Handler(monkey(tusPostHandler(), "/api/tus")).Methods("POST")
 	api.PathPrefix("/tus").Handler(monkey(tusHeadHandler(), "/api/tus")).Methods("HEAD", "GET")
 	api.PathPrefix("/tus").Handler(monkey(tusPatchHandler(), "/api/tus")).Methods("PATCH")

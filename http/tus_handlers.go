@@ -92,7 +92,7 @@ func tusHeadHandler() handleFunc {
 
 func tusPatchHandler() handleFunc {
 	return withUser(func(w http.ResponseWriter, r *http.Request, d *data) (int, error) {
-		if !d.user.Perm.Modify || !d.Check(r.URL.Path) {
+		if !d.user.Perm.Create || !d.Check(r.URL.Path) {
 			return http.StatusForbidden, nil
 		}
 		if r.Header.Get("Content-Type") != "application/offset+octet-stream" {
